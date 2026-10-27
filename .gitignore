@@ -1,0 +1,92 @@
+﻿# Compiled Java files
+*.class
+build/
+buildcheck*/
+out/
+
+# Local credentials and environment files
+.env
+.env.*
+!.env.example
+*.jks
+*.keystore
+
+# IDE and operating-system files
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Database dumps and backups
+*.sql
+*.sql.gz
+*.dump
+*.bak
+
+# Compiled classes and build output
+*.class
+bin/
+out/
+build*/
+buildcheck*/
+
+# Temporary warning experiment
+ThisEscapeCheck.java
+build_warnings.txt
+
+# Source backups
+*.bak
+*.prelogin.bak
+*.predata.bak
+
+# Local credentials
+.env
+.env.*
+!.env.example
+
+# Database dumps and backups
+*.sql
+*.sql.gz
+*.dump
+
+# Local snapshots and backup files
+*.backup
+*.java.backup
+*_before_*.txt
+*_before_*.java
+CustomerDashboard_*backup*.txt
+
+# Local build output
+bin/
+out/
+build*/
+buildcheck*/
+
+# Java compiled files
+*.class
+
+# Build output
+bin/
+out/
+build*/
+buildcheck*/
+
+# Temporary files and source backups
+*.backup
+*.bak
+*.prelogin.bak
+*.predata.bak
+*_before_*.txt
+*_before_*.java
+CustomerDashboard_*backup*.txt
+
+# Local credentials
+.env
+.env.*
+!.env.example
+
+# Database dumps and backups
+*.sql
+*.sql.gz
+*.dump
+*.bak

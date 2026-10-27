@@ -1,0 +1,971 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SENTINEL | Investigator Portal</title>
+    <style>
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: grid;
+            place-items: center;
+            padding: 24px;
+            font-family: Arial, sans-serif;
+            background: #f2f4f7;
+            color: #172033;
+        }
+
+        .panel {
+            width: 100%;
+            max-width: 420px;
+            padding: 32px;
+            background: white;
+            border: 1px solid #e1e5ec;
+            border-radius: 18px;
+            box-shadow: 0 16px 45px #17203312;
+        }
+
+        .brand {
+            font-size: 13px;
+            font-weight: bold;
+            letter-spacing: 3px;
+            color: #64748b;
+        }
+
+        h1 { margin: 12px 0 8px; font-size: 27px; }
+        .subtitle { color: #64748b; line-height: 1.5; }
+
+        label {
+            display: block;
+            margin: 20px 0 8px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        input {
+            width: 100%;
+            padding: 13px;
+            border: 1px solid #d5dbe5;
+            border-radius: 9px;
+            font-size: 15px;
+        }
+
+        input:focus, textarea:focus, select:focus {
+            outline: 2px solid #a5b4fc;
+            border-color: #6366f1;
+        }
+
+        textarea {
+            font: inherit;
+            resize: vertical;
+        }
+
+        button {
+            width: 100%;
+            margin-top: 22px;
+            padding: 14px;
+            border: 0;
+            border-radius: 9px;
+            background: #263b70;
+            color: white;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:disabled { opacity: .6; cursor: not-allowed; }
+
+        #message {
+            margin-top: 16px;
+            color: #b42318;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .back {
+            display: block;
+            margin-top: 22px;
+            color: #475569;
+            font-size: 13px;
+            text-align: center;
+        }
+
+        .workspace {
+            width: 100%;
+            max-width: 900px;
+        }
+
+        .workspace header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .workspace header button {
+            width: auto;
+            margin: 0;
+            padding: 10px 18px;
+        }
+
+        .feature {
+            margin-top: 24px;
+            padding: 24px;
+            border: 1px solid #e1e5ec;
+            border-radius: 14px;
+            background: white;
+        }
+
+        [hidden] { display: none !important; }
+
+        .modal-backdrop {
+            position: fixed;
+            inset: 0;
+            z-index: 1000;
+            display: grid;
+            place-items: center;
+            padding: 20px;
+            background: rgba(15, 23, 42, .58);
+        }
+
+        .details-modal {
+            width: min(760px, 100%);
+            max-height: min(85vh, 900px);
+            overflow: auto;
+            padding: 26px;
+            border: 1px solid #e1e5ec;
+            border-radius: 18px;
+            background: #fff;
+            box-shadow: 0 24px 70px #0f172a40;
+        }
+
+        .details-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 16px;
+        }
+
+        .details-header h2 { margin: 0 0 6px; }
+        .details-header button, .details-modal button {
+            width: auto;
+            margin: 0;
+            padding: 10px 14px;
+        }
+
+        .details-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 12px;
+            margin: 20px 0;
+        }
+
+        .detail-item {
+            min-width: 0;
+            padding: 13px;
+            border: 1px solid #e5eaf1;
+            border-radius: 10px;
+            background: #f8fafc;
+        }
+
+        .detail-label {
+            margin-bottom: 6px;
+            color: #64748b;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .04em;
+        }
+
+        .detail-value {
+            overflow-wrap: anywhere;
+            white-space: pre-wrap;
+            line-height: 1.5;
+        }
+
+        .details-section { margin-top: 18px; }
+        .details-section h3 { margin-bottom: 8px; font-size: 15px; }
+        .details-text {
+            padding: 13px;
+            border-radius: 10px;
+            background: #f8fafc;
+            border: 1px solid #e5eaf1;
+            white-space: pre-wrap;
+            overflow-wrap: anywhere;
+            line-height: 1.55;
+            min-height: 42px;
+        }
+
+        @media (max-width: 560px) {
+            .details-modal { padding: 18px; }
+            .details-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <main id="loginPanel" class="panel">
+        <div class="brand">S E N T I N E L</div>
+        <h1>Investigator sign in</h1>
+        <p class="subtitle">
+            Secure access for authorized fraud investigation personnel.
+        </p>
+
+        <form id="loginForm">
+            <label for="username">Investigator username</label>
+            <input id="username" name="username"
+                   autocomplete="username" required>
+
+            <label for="password">Password</label>
+            <input id="password" name="password" type="password"
+                   autocomplete="current-password" required>
+
+            <button id="submitButton" type="submit">
+                Sign in securely
+            </button>
+            <p id="message" role="alert" aria-live="polite"></p>
+        </form>
+
+        <a class="back" href="/">Return to customer portal</a>
+    </main>
+
+    <main id="workspace" class="workspace" hidden>
+        <header>
+            <div>
+                <div class="brand">S E N T I N E L</div>
+                <h1>Investigator workspace</h1>
+                <p id="welcome" class="subtitle"></p>
+            </div>
+            <button id="logoutButton" type="button">Sign out</button>
+        </header>
+
+
+<section class="feature">
+    <h2>Transaction investigation</h2>
+    <p>Review recent transactions from the SENTINEL test database.</p>
+
+    <div style="display:flex; gap:12px; flex-wrap:wrap; margin:20px 0;">
+        <input
+            id="transactionSearch"
+            type="search"
+            placeholder="Search transaction ID or account ID"
+            style="flex:1; min-width:220px;"
+        >
+
+        <select id="transactionStatus" style="padding:12px; border-radius:9px;">
+            <option value="">All statuses</option>
+            <option value="COMPLETED">Completed</option>
+            <option value="PENDING">Pending</option>
+            <option value="ON_HOLD">On hold</option>
+            <option value="REJECTED">Rejected</option>
+        </select>
+
+        <button id="refreshTransactions" type="button"
+            style="width:auto; margin:0;">
+            Refresh
+        </button>
+    </div>
+
+    <p id="transactionMessage" role="status" aria-live="polite">
+        Loading transactions...
+    </p>
+
+    <div style="overflow-x:auto;">
+        <table style="width:100%; border-collapse:collapse; font-size:14px;">
+            <thead>
+                <tr style="text-align:left; border-bottom:2px solid #e1e5ec;">
+                    <th style="padding:12px 8px;">Transaction</th>
+                    <th style="padding:12px 8px;">Date &amp; time</th>
+                    <th style="padding:12px 8px;">Amount</th>
+                    <th style="padding:12px 8px;">Accounts</th>
+                    <th style="padding:12px 8px;">Source</th>
+                    <th style="padding:12px 8px;">Status</th>
+                </tr>
+            </thead>
+            <tbody id="transactionRows">
+                <tr>
+                    <td colspan="6" style="padding:16px 8px;">
+                        Loading...
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+
+
+
+<section class="feature">
+    <h2>Fraud alerts</h2>
+    <p>Review alerts generated by the SENTINEL fraud detection engine.</p>
+
+    <button id="refreshAlerts" type="button"
+        style="width:auto; margin:12px 0;">
+        Refresh alerts
+    </button>
+
+    <p id="alertsMessage" role="status" aria-live="polite">
+        Loading fraud alerts...
+    </p>
+
+    <div style="overflow-x:auto;">
+        <table style="width:100%; border-collapse:collapse; font-size:14px;">
+            <thead>
+                <tr style="text-align:left; border-bottom:2px solid #e1e5ec;">
+                    <th style="padding:12px 8px;">Alert</th>
+                    <th style="padding:12px 8px;">Transaction</th>
+                    <th style="padding:12px 8px;">Amount</th>
+                    <th style="padding:12px 8px;">Risk score</th>
+                    <th style="padding:12px 8px;">Triggered rule</th>
+                    <th style="padding:12px 8px;">Status</th>
+                    <th style="padding:12px 8px;">Created</th>
+                    <th style="padding:12px 8px;">Action</th>
+                </tr>
+            </thead>
+            <tbody id="alertRows">
+                <tr>
+                    <td colspan="8" style="padding:16px 8px;">
+                        Loading alerts...
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<section class="feature" id="investigationPanel" hidden>
+    <h2>Submit investigation</h2>
+    <p id="selectedAlertLabel" class="subtitle"></p>
+
+    <form id="investigationForm">
+        <input type="hidden" id="investigationAlertId" name="alertId">
+
+        <label for="investigationDecision">Decision</label>
+        <select id="investigationDecision" name="decision" required
+                style="width:100%; padding:13px; border:1px solid #d5dbe5; border-radius:9px;">
+            <option value="">Choose a decision</option>
+            <option value="LEGITIMATE">Legitimate</option>
+            <option value="SUSPECTED_FRAUD">Suspected fraud</option>
+            <option value="NEEDS_MORE_INFO">Needs more information</option>
+        </select>
+
+        <label for="investigationNote">Investigation note (required)</label>
+        <textarea id="investigationNote" name="note" required maxlength="2000"
+                  rows="3"
+                  style="width:100%; padding:13px; border:1px solid #d5dbe5; border-radius:9px;"></textarea>
+
+        <label for="investigationEvidence">Evidence (optional)</label>
+        <textarea id="investigationEvidence" name="evidence" maxlength="1000"
+                  rows="2"
+                  style="width:100%; padding:13px; border:1px solid #d5dbe5; border-radius:9px;"></textarea>
+
+        <label for="investigationFindings">Findings (optional)</label>
+        <textarea id="investigationFindings" name="findings" maxlength="1000"
+                  rows="2"
+                  style="width:100%; padding:13px; border:1px solid #d5dbe5; border-radius:9px;"></textarea>
+
+        <label for="investigationFollowUp">Follow-up action (optional)</label>
+        <textarea id="investigationFollowUp" name="followUp" maxlength="1000"
+                  rows="2"
+                  style="width:100%; padding:13px; border:1px solid #d5dbe5; border-radius:9px;"></textarea>
+
+        <p id="investigationMessage" role="status" aria-live="polite"></p>
+        <div style="display:flex; gap:12px; flex-wrap:wrap;">
+            <button id="saveInvestigationButton" type="submit"
+                    style="width:auto;">Save investigation</button>
+            <button id="cancelInvestigationButton" type="button"
+                    style="width:auto; background:#64748b;">Cancel</button>
+        </div>
+    </form>
+</section>
+
+<div id="investigationDetailsBackdrop" class="modal-backdrop" hidden>
+    <section class="details-modal" role="dialog" aria-modal="true"
+             aria-labelledby="detailsModalTitle">
+        <div class="details-header">
+            <div>
+                <h2 id="detailsModalTitle">Investigation details</h2>
+                <p id="detailsModalSubtitle" class="subtitle">Loading saved case details...</p>
+            </div>
+            <button id="closeDetailsButton" type="button"
+                    style="background:#64748b;">Close</button>
+        </div>
+        <p id="detailsModalMessage" role="status" aria-live="polite"></p>
+        <div id="detailsModalContent"></div>
+    </section>
+</div>
+
+    </main>
+
+    <script>
+        const loginPanel = document.getElementById("loginPanel");
+        const workspace = document.getElementById("workspace");
+        const form = document.getElementById("loginForm");
+        const submitButton = document.getElementById("submitButton");
+        const message = document.getElementById("message");
+
+        function showLoginError(text) {
+            message.textContent = text;
+        }
+
+        function showWorkspace(user) {
+            loginPanel.hidden = true;
+            workspace.hidden = false;
+            document.getElementById("welcome").textContent =
+                "Signed in as " + (user.username || "investigator");
+loadInvestigatorTransactions();
+loadInvestigatorAlerts();        }
+
+        async function checkInvestigatorSession() {
+            try {
+                const response = await fetch("/api/me", {
+                    credentials: "same-origin",
+                    cache: "no-store"
+                });
+
+                if (!response.ok) return;
+
+                const user = await response.json();
+
+                if (String(user.role || "").toUpperCase() === "INVESTIGATOR") {
+                    showWorkspace(user);
+                }
+            } catch (_) {
+                // A missing session simply leaves the login form visible.
+            }
+        }
+
+        form.addEventListener("submit", async (event) => {
+
+            event.preventDefault();
+            message.textContent = "";
+            submitButton.disabled = true;
+
+            try {
+                const body = new URLSearchParams({
+                    username: document.getElementById("username").value.trim(),
+                    password: document.getElementById("password").value
+                });
+
+                const response = await fetch("/api/login", {
+                    method: "POST",
+                    credentials: "same-origin",
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded"
+                    },
+                    body: body.toString(),
+                    cache: "no-store"
+                });
+
+                const result = await response.json();
+
+                if (!response.ok) {
+                    showLoginError(result.error || "Sign-in failed.");
+                    return;
+                }
+
+                document.getElementById("password").value = "";
+
+                if (String(result.role || "").toUpperCase()
+                        !== "INVESTIGATOR") {
+                    await fetch("/api/logout", {
+                        method: "POST",
+                        credentials: "same-origin"
+                    });
+
+                    showLoginError(
+                        "This portal is for investigators only."
+                    );
+                    return;
+                }
+                showWorkspace(result);
+            } catch (_) {
+                showLoginError(
+                    "Cannot reach SENTINEL. Check that the API server is running."
+                );
+            } finally {
+                submitButton.disabled = false;
+            }
+        });
+
+        document.getElementById("logoutButton").addEventListener(
+            "click", async () => {
+                try {
+                    await fetch("/api/logout", {
+                        method: "POST",
+                        credentials: "same-origin"
+                    });
+                } finally {
+                    window.location.reload();
+                }
+            }
+        );
+
+
+let allTransactions = [];
+
+async function loadInvestigatorTransactions() {
+    const message = document.getElementById("transactionMessage");
+    const rows = document.getElementById("transactionRows");
+
+    message.textContent = "Loading transactions...";
+    rows.replaceChildren();
+
+    try {
+        const response = await fetch("/api/investigator/transactions", {
+            credentials: "same-origin",
+            cache: "no-store"
+        });
+
+        if (response.status === 401 || response.status === 403) {
+            message.textContent =
+                "Investigator access required. Please sign in again.";
+            return;
+        }
+
+        if (!response.ok) {
+            message.textContent =
+                "Could not load transactions. HTTP " + response.status;
+            return;
+        }
+
+        allTransactions = await response.json();
+        renderInvestigatorTransactions();
+    } catch (_) {
+        message.textContent =
+            "Cannot reach SENTINEL. Check that the server is running.";
+    }
+}
+
+
+async function loadInvestigatorAlerts() {
+    const message = document.getElementById("alertsMessage");
+    const rows = document.getElementById("alertRows");
+
+    message.textContent = "Loading fraud alerts...";
+    rows.replaceChildren();
+
+    try {
+        const response = await fetch("/api/investigator/alerts", {
+            credentials: "same-origin",
+            cache: "no-store"
+        });
+
+        if (response.status === 401 || response.status === 403) {
+            message.textContent =
+                "Investigator access required. Please sign in again.";
+            return;
+        }
+
+        if (!response.ok) {
+            message.textContent =
+                "Could not load fraud alerts. HTTP " + response.status;
+            return;
+        }
+
+        const alerts = await response.json();
+        message.textContent = "Showing " + alerts.length + " fraud alert(s).";
+
+        if (alerts.length === 0) {
+            const tr = document.createElement("tr");
+            const td = document.createElement("td");
+            td.colSpan = 8;
+            td.style.padding = "16px 8px";
+            td.textContent = "No fraud alerts found.";
+            tr.appendChild(td);
+            rows.appendChild(tr);
+            return;
+        }
+
+        alerts.forEach(alert => {
+            const tr = document.createElement("tr");
+            tr.style.borderBottom = "1px solid #e1e5ec";
+
+            const values = [
+                "#" + alert.alertId,
+                "#" + alert.transactionId,
+                alert.amount == null ? "—" : "₹" + alert.amount,
+                alert.riskScore,
+                alert.triggeredRules || "—",
+                alert.status || "—",
+                alert.createdAt || "—"
+            ];
+
+            values.forEach(value => {
+                const td = document.createElement("td");
+                td.style.padding = "12px 8px";
+                td.textContent = String(value);
+                tr.appendChild(td);
+            });
+
+            const actionCell = document.createElement("td");
+            actionCell.style.padding = "12px 8px";
+            actionCell.style.whiteSpace = "nowrap";
+
+            const actionButton = document.createElement("button");
+            actionButton.type = "button";
+            actionButton.textContent = "Investigate";
+            actionButton.style.width = "auto";
+            actionButton.style.margin = "0 6px 0 0";
+            actionButton.style.padding = "8px 12px";
+            actionButton.disabled = String(alert.status).toUpperCase() === "CLOSED";
+            actionButton.addEventListener("click", () => openInvestigationForm(alert));
+
+            const viewButton = document.createElement("button");
+            viewButton.type = "button";
+            viewButton.textContent = "View Details";
+            viewButton.style.width = "auto";
+            viewButton.style.margin = "0";
+            viewButton.style.padding = "8px 12px";
+            viewButton.style.background = "#475569";
+            viewButton.addEventListener("click", () => openInvestigationDetails(alert));
+
+            actionCell.appendChild(actionButton);
+            actionCell.appendChild(viewButton);
+            tr.appendChild(actionCell);
+
+            rows.appendChild(tr);
+        });
+    } catch (_) {
+        message.textContent =
+            "Cannot reach SENTINEL. Check that the server is running.";
+    }
+}
+
+document.getElementById("refreshAlerts").addEventListener(
+    "click", loadInvestigatorAlerts
+);
+
+
+function renderInvestigatorTransactions() {
+    const rows = document.getElementById("transactionRows");
+    const message = document.getElementById("transactionMessage");
+    const search = document.getElementById("transactionSearch")
+        .value.trim().toLowerCase();
+    const status = document.getElementById("transactionStatus").value;
+
+    rows.replaceChildren();
+
+    const filtered = allTransactions.filter(tx => {
+        const matchesSearch = [
+            tx.transactionId,
+            tx.senderAccountId,
+            tx.receiverAccountId
+        ].some(value => String(value).toLowerCase().includes(search));
+
+        return matchesSearch && (!status || tx.status === status);
+    });
+
+    message.textContent =
+        "Showing " + filtered.length + " of "
+        + allTransactions.length + " transactions.";
+
+    if (filtered.length === 0) {
+        const tr = document.createElement("tr");
+        const td = document.createElement("td");
+        td.colSpan = 6;
+        td.style.padding = "16px 8px";
+        td.textContent = "No matching transactions found.";
+        tr.appendChild(td);
+        rows.appendChild(tr);
+        return;
+    }
+
+    filtered.forEach(tx => {
+        const tr = document.createElement("tr");
+        tr.style.borderBottom = "1px solid #e1e5ec";
+
+        const values = [
+            "#" + tx.transactionId,
+            tx.transactionTime || "—",
+            tx.amount == null ? "—" : tx.amount,
+            tx.senderAccountId + " → " + tx.receiverAccountId,
+            tx.source || "—",
+            tx.status || "—"
+        ];
+
+        values.forEach(value => {
+            const td = document.createElement("td");
+            td.style.padding = "12px 8px";
+            td.textContent = String(value);
+            tr.appendChild(td);
+        });
+
+        rows.appendChild(tr);
+    });
+}
+
+document.getElementById("transactionSearch").addEventListener(
+    "input", renderInvestigatorTransactions
+);
+
+document.getElementById("transactionStatus").addEventListener(
+    "change", renderInvestigatorTransactions
+);
+
+document.getElementById("refreshTransactions").addEventListener(
+    "click", loadInvestigatorTransactions
+);
+
+
+
+function openInvestigationForm(alert) {
+    if (String(alert.status).toUpperCase() === "CLOSED") {
+        document.getElementById("investigationMessage").textContent =
+            "This alert is already closed and cannot be investigated again.";
+        return;
+    }
+
+    const panel = document.getElementById("investigationPanel");
+    const form = document.getElementById("investigationForm");
+
+    if (!panel || !form) {
+        console.error("Investigation form elements are missing.");
+        return;
+    }
+
+    form.reset();
+
+    document.getElementById("investigationAlertId").value = alert.alertId;
+
+    document.getElementById("selectedAlertLabel").textContent =
+        "Alert #" + alert.alertId +
+        " · Transaction #" + alert.transactionId +
+        " · Risk score " + alert.riskScore +
+        " · Current status " + alert.status;
+
+    document.getElementById("investigationMessage").textContent = "";
+
+    panel.hidden = false;
+    panel.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+    });
+}
+
+
+document.getElementById("cancelInvestigationButton").addEventListener(
+    "click", () => {
+        document.getElementById("investigationPanel").hidden = true;
+        document.getElementById("investigationForm").reset();
+        document.getElementById("investigationMessage").textContent = "";
+    }
+);
+
+document.getElementById("investigationForm").addEventListener(
+    "submit", async (event) => {
+        event.preventDefault();
+
+        const submit = document.getElementById("saveInvestigationButton");
+        const message = document.getElementById("investigationMessage");
+
+        if (submit.disabled) return;
+
+        submit.disabled = true;
+        message.style.color = "#475569";
+        message.textContent = "Saving investigation...";
+
+        const body = new URLSearchParams({
+            alertId: document.getElementById("investigationAlertId").value,
+            decision: document.getElementById("investigationDecision").value,
+            note: document.getElementById("investigationNote").value,
+            evidence: document.getElementById("investigationEvidence").value,
+            findings: document.getElementById("investigationFindings").value,
+            followUp: document.getElementById("investigationFollowUp").value
+        });
+
+        try {
+            const response = await fetch("/api/investigator/investigations", {
+                method: "POST",
+                credentials: "same-origin",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
+                body: body.toString(),
+                cache: "no-store"
+            });
+
+            const result = await response.json();
+
+            if (!response.ok) {
+                message.style.color = "#b42318";
+                message.textContent =
+                    result.error || "Could not save investigation.";
+                return;
+            }
+
+            message.style.color = "#067647";
+            message.textContent =
+                "Investigation saved successfully. Alert status: " +
+                result.status + ".";
+
+            // Refresh alerts separately so a refresh error cannot
+            // make a successful investigation look unsuccessful.
+            try {
+                await loadInvestigatorAlerts();
+            } catch (refreshError) {
+                console.error("Alert refresh failed:", refreshError);
+                message.textContent =
+                    "Investigation saved, but alerts could not refresh. Reload the alerts.";
+                return;
+            }
+
+            window.setTimeout(() => {
+                document.getElementById("investigationPanel").hidden = true;
+                document.getElementById("investigationForm").reset();
+                message.textContent = "";
+            }, 1200);
+
+        } catch (error) {
+            console.error("Investigation submission failed:", error);
+            message.style.color = "#b42318";
+            message.textContent =
+                "Request failed. Check the server and browser Console.";
+        } finally {
+            submit.disabled = false;
+        }
+    }
+);
+
+function addDetailItem(grid, label, value) {
+    const item = document.createElement("div");
+    item.className = "detail-item";
+    const heading = document.createElement("div");
+    heading.className = "detail-label";
+    heading.textContent = label;
+    const content = document.createElement("div");
+    content.className = "detail-value";
+    content.textContent = value == null || String(value).trim() === ""
+        ? "Not provided" : String(value);
+    item.append(heading, content);
+    grid.appendChild(item);
+}
+
+function addDetailSection(container, headingText, value) {
+    const section = document.createElement("section");
+    section.className = "details-section";
+    const heading = document.createElement("h3");
+    heading.textContent = headingText;
+    const content = document.createElement("div");
+    content.className = "details-text";
+    content.textContent = value == null || String(value).trim() === ""
+        ? "Not provided" : String(value);
+    section.append(heading, content);
+    container.appendChild(section);
+}
+
+async function openInvestigationDetails(alert) {
+    const backdrop = document.getElementById("investigationDetailsBackdrop");
+    const subtitle = document.getElementById("detailsModalSubtitle");
+    const message = document.getElementById("detailsModalMessage");
+    const content = document.getElementById("detailsModalContent");
+
+    backdrop.hidden = false;
+    subtitle.textContent = "Alert #" + alert.alertId + " · Transaction #" + alert.transactionId;
+    message.style.color = "#475569";
+    message.textContent = "Loading saved investigation details...";
+    content.replaceChildren();
+
+    try {
+        const response = await fetch(
+            "/api/investigator/investigations/details?alertId=" + encodeURIComponent(alert.alertId),
+            { credentials: "same-origin", cache: "no-store" }
+        );
+
+        let result;
+        try {
+            result = await response.json();
+        } catch (_) {
+            throw new Error("The server returned an unreadable response.");
+        }
+
+        if (!response.ok) {
+            throw new Error(result.error || "Could not load investigation details.");
+        }
+
+        const investigations = Array.isArray(result.investigations)
+            ? result.investigations : [];
+        message.textContent = "";
+
+        if (investigations.length === 0) {
+            message.style.color = "#475569";
+            message.textContent = "No saved investigation record was found for this alert.";
+            const grid = document.createElement("div");
+            grid.className = "details-grid";
+            addDetailItem(grid, "Alert ID", alert.alertId);
+            addDetailItem(grid, "Transaction ID", alert.transactionId);
+            addDetailItem(grid, "Case status", alert.status);
+            addDetailItem(grid, "Risk score", alert.riskScore);
+            content.appendChild(grid);
+            addDetailSection(content, "Triggered rules", alert.triggeredRules);
+            return;
+        }
+
+        investigations.forEach((item, index) => {
+            if (index > 0) {
+                const separator = document.createElement("hr");
+                separator.style.margin = "24px 0";
+                separator.style.border = "0";
+                separator.style.borderTop = "1px solid #e1e5ec";
+                content.appendChild(separator);
+            }
+
+            const recordTitle = document.createElement("h3");
+            recordTitle.style.margin = "18px 0 8px";
+            recordTitle.textContent = investigations.length > 1
+                ? "Investigation record " + (index + 1)
+                : "Saved investigation";
+            content.appendChild(recordTitle);
+
+            const grid = document.createElement("div");
+            grid.className = "details-grid";
+            addDetailItem(grid, "Alert ID", item.alertId);
+            addDetailItem(grid, "Transaction ID", item.transactionId);
+            addDetailItem(grid, "Case status", item.alertStatus || alert.status);
+            addDetailItem(grid, "Risk score", item.riskScore == null ? alert.riskScore : item.riskScore);
+            addDetailItem(grid, "Decision", item.decision);
+            addDetailItem(grid, "Investigation status", item.investigationStatus);
+            addDetailItem(grid, "Investigator", item.investigatorUsername);
+            addDetailItem(grid, "Reviewed at", item.reviewedAt);
+            content.appendChild(grid);
+
+            addDetailSection(content, "Investigation note", item.note);
+            addDetailSection(content, "Evidence", item.evidence);
+            addDetailSection(content, "Findings", item.findings);
+            addDetailSection(content, "Follow-up action", item.followUp);
+            addDetailSection(content, "Triggered rules", item.triggeredRules || alert.triggeredRules);
+        });
+    } catch (error) {
+        message.style.color = "#b42318";
+        message.textContent = error.message || "Could not load investigation details.";
+        console.error("Investigation details load failed:", error);
+    }
+}
+
+function closeInvestigationDetails() {
+    document.getElementById("investigationDetailsBackdrop").hidden = true;
+}
+
+document.getElementById("closeDetailsButton").addEventListener(
+    "click", closeInvestigationDetails
+);
+document.getElementById("investigationDetailsBackdrop").addEventListener(
+    "click", (event) => {
+        if (event.target.id === "investigationDetailsBackdrop") {
+            closeInvestigationDetails();
+        }
+    }
+);
+document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") closeInvestigationDetails();
+});
+
+checkInvestigatorSession();
+
+    </script>
+</body>
+</html>

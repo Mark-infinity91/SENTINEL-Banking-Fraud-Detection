@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" fill="none">
+  <defs>
+    <linearGradient id="glass" x1="25" y1="25" x2="130" y2="140" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#42D9B0" stop-opacity=".32"/>
+      <stop offset="1" stop-color="#008F75" stop-opacity=".08"/>
+    </linearGradient>
+    <linearGradient id="emerald" x1="80" y1="15" x2="80" y2="115" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#20C9A0" stop-opacity=".42"/>
+      <stop offset="1" stop-color="#006B59" stop-opacity=".14"/>
+    </linearGradient>
+    <filter id="shadow" x="-30%" y="-30%" width="160%" height="170%">
+      <feGaussianBlur stdDeviation="4"/>
+    </filter>
+  </defs>
+  <ellipse cx="80" cy="130" rx="43" ry="9" fill="#00D5A0" opacity=".12" filter="url(#shadow)"/>
+  <g stroke="#70E7CC" stroke-opacity=".19" stroke-width="1.2">
+    <path d="M19 92 80 59 141 92 80 125Z" fill="url(#glass)"/>
+    <path d="M19 101 80 68 141 101 80 134Z" fill="url(#glass)"/>
+    <path d="M19 110 80 77 141 110 80 143Z" fill="url(#glass)"/>
+  </g>
+  <path d="M48 45 80 28 112 45 112 91 80 108 48 91Z" fill="url(#emerald)" stroke="#6DE7CB" stroke-opacity=".25" stroke-width="1.2"/>
+  <g stroke="#D8FFF5" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M56 57 80 44 104 57Z" fill="#E6FFF8" fill-opacity=".9"/>
+    <path d="M61 61H99M61 83H99M57 89H103"/>
+    <path d="M65 61V82M75 61V82M85 61V82M95 61V82"/>
+    <path d="M80 44V38"/>
+    <circle cx="80" cy="37" r="2" fill="#E6FFF8" stroke="none"/>
+  </g>
+</svg>
